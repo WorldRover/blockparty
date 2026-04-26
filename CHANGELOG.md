@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ## [Unreleased]
 
+### Added
+
+- `README.md` — quick-start, sovereignty sequence summary, file map.
+
 ## [0.1.0] - 2026-04-26
 
 Initial public release. Renders pixel-grid choropleth of continental US colored by historical sovereignty sequence per location, with hover tooltip, zoom/pan, and legend.
