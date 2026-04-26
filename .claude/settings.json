@@ -1,0 +1,23 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit *)",
+            "command": "input=$(cat); cmd=$(echo \"$input\" | jq -r '.tool_input.command // empty' 2>/dev/null); if ! echo \"$cmd\" | grep -qE '(^|[^a-zA-Z0-9_-])git[[:space:]]+commit($|[^a-zA-Z0-9_-])'; then exit 0; fi; if git diff --cached --name-only 2>/dev/null | grep -q '^CHANGELOG.md$'; then exit 0; fi; if echo \"$cmd\" | grep -q 'CHANGELOG'; then exit 0; fi; echo '{\"decision\":\"block\",\"reason\":\"CHANGELOG.md is not staged. Update the changelog and bump the version before committing. Stage CHANGELOG.md (and any version-file changes), then retry.\"}'",
+            "statusMessage": "Checking changelog..."
+          },
+          {
+            "type": "command",
+            "if": "Bash(git push *)",
+            "command": "input=$(cat); cmd=$(echo \"$input\" | jq -r '.tool_input.command // empty' 2>/dev/null); if ! echo \"$cmd\" | grep -qE '(^|[^a-zA-Z0-9_-])git[[:space:]]+push($|[^a-zA-Z0-9_-])'; then exit 0; fi; branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null); if [ \"$branch\" = \"main\" ] || [ \"$branch\" = \"HEAD\" ] || [ -z \"$branch\" ]; then exit 0; fi; if echo \"$branch\" | grep -qE '^(feat|fix|refactor|chore|docs|test)/[0-9]+-[a-z0-9-]+$'; then exit 0; fi; printf '{\"decision\":\"block\",\"reason\":\"Branch name %s does not follow <type>/<issue>-<slug>. Allowed prefixes: feat/, fix/, refactor/, chore/, docs/, test/. Example: chore/4-dep-bump. Rename with git branch -m, or push to main if this is a trivial edit.\"}\\n' \"$branch\"",
+            "statusMessage": "Checking branch name..."
+          }
+        ]
+      }
+    ]
+  }
+}
