@@ -7,6 +7,7 @@ All notable changes to this project are documented here. Format based on [Keep a
 ### Added
 
 - `README.md` — quick-start, sovereignty sequence summary, file map.
+- `.markdownlint.json` and `.editorconfig` from the WorldRover canon. Initial scaffold missed these; CI was red on default markdownlint MD013 (line-length) until the configs landed. Closes #1.
 
 ## [0.1.0] - 2026-04-26
 
