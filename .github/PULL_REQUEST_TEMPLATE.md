@@ -4,6 +4,14 @@
 
 ## Test plan
 
-<!-- How was this verified? Checklist of commands / manual steps, or "N/A — docs only". -->
+<!-- Pre-merge gate checks only. Don't include "CI green" — already enforced by required-status-checks.
+     If a check is genuinely manual, name the exact action (e.g. "open the rendered README on github.com").
+     "N/A — docs only" is fine when the only check is automated lint. -->
+
+## Follow-ups
+
+<!-- Post-merge work: release tagging, smoke-testing the next change, watching a metric.
+     If non-trivial, link a tracking issue rather than leaving a checkbox in a closed PR.
+     Delete this section if there are none. -->
 
 Closes #
