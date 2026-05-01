@@ -4,6 +4,10 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ## [Unreleased]
 
+### Changed
+
+- `scripts/protect-main.sh` — sync to canon v0.2.6: accepts optional `OWNER/REPO` arg, improved check-context detection (space-aware `/` heuristic), post-apply warning when a required context name isn't found in recent CI runs.
+
 ### Added
 
 - `README.md` — quick-start, sovereignty sequence summary, file map.
