@@ -11,6 +11,6 @@ changelog:
     - title: "Documentation"
       labels: ["type: docs"]
     - title: "Maintenance"
-      labels: ["infra", "chore"]
+      labels: ["infra", "type: refactor"]
   exclude:
     labels: ["duplicate", "invalid", "wontfix"]

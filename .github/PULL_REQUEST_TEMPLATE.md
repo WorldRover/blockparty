@@ -1,3 +1,5 @@
+Closes #
+
 ## Summary
 
 <!-- 1-3 bullets describing what changed and why. -->
@@ -13,5 +15,3 @@
 <!-- Post-merge work: release tagging, smoke-testing the next change, watching a metric.
      If non-trivial, link a tracking issue rather than leaving a checkbox in a closed PR.
      Delete this section if there are none. -->
-
-Closes #

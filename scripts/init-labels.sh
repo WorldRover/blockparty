@@ -49,6 +49,14 @@ create "type: docs"         "Documentation only"                    "999999"
 create "type: enhancement"  "Refinement of existing functionality"  "7057ff"
 create "type: refactor"     "Behavior-preserving restructuring"     "e4e669"
 
+# Standard
+create "duplicate"        "This issue or pull request already exists" "cfd3d7"
+create "good first issue" "Good for newcomers"                        "7057ff"
+create "help wanted"      "Extra attention is needed"                 "008672"
+create "invalid"          "This doesn't seem right"                   "e4e669"
+create "question"         "Further information is requested"          "d876e3"
+create "wontfix"          "This will not be worked on"                "ffffff"
+
 # Remove the GitHub default labels that overlap with the type:- variants.
 # These deletions are also non-fatal — if they don't exist, gh prints a warning.
 echo "Removing redundant default labels"
