@@ -1,33 +1,56 @@
 #!/usr/bin/env bash
-# Apply the canonical WorldRover branch-protection profile to `main` on the
-# current GitHub repo. Solo-friendly: blocks force-push and deletion, requires
-# a PR for any change to main, and requires a status check named `markdown-lint`
-# (the one job every starter-derived repo has). Skip the review requirement —
-# solo work doesn't have a reviewer, and a 0-approval PR-required rule still
-# enforces the PR flow.
+# Apply the canonical WorldRover branch-protection profile to `main`.
+# Solo-friendly: blocks force-push and deletion, requires linear history,
+# requires a PR for any change (0 approvals — still enforces the PR flow),
+# and requires at least the `markdown-lint` status check.
 #
-# Usage: ./scripts/protect-main.sh [extra_check_name ...]
+# Usage: ./scripts/protect-main.sh [OWNER/REPO] [check_context ...]
 #
-# Required checks given as arguments are added on top of `markdown-lint`. For a
-# Node project that runs typecheck + build under a `build` job, you would call:
+# OWNER/REPO is optional — defaults to the repo in the current directory.
+# Pass it when running against a different repo (matches init-labels.sh).
 #
+# check_context strings must match what GitHub reports verbatim. For jobs
+# with no `name:` key, this is the job ID (e.g. `markdown-lint`, `build`).
+# For jobs with a display name, GitHub uses the name directly. To see the
+# exact strings for a repo:
+#
+#   gh api repos/OWNER/REPO/commits/main/check-runs --jq '.[].name'
+#
+# Examples:
+#   ./scripts/protect-main.sh
 #   ./scripts/protect-main.sh build
+#   ./scripts/protect-main.sh WorldRover/myrepo build
 #
 # Re-running is idempotent — it overwrites the protection ruleset.
 
 set -euo pipefail
 
-repo=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
+REPO=""
 
-# Build the contexts list: markdown-lint plus any extra args.
-contexts_json='["markdown-lint"'
-for c in "$@"; do
-  contexts_json+=",\"$c\""
+for arg in "$@"; do
+  # OWNER/REPO: contains / but no spaces (repo names can't have spaces).
+  # Check contexts like "CI / job (event)" also contain / but do have spaces.
+  if [[ "$arg" == */* ]] && [[ "$arg" != *" "* ]]; then
+    REPO="$arg"
+  fi
 done
-contexts_json+="]"
 
-# shellcheck disable=SC2016
-gh api -X PUT "repos/${repo}/branches/main/protection" \
+if [[ -z "$REPO" ]]; then
+  REPO=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
+fi
+
+# Build contexts array: markdown-lint plus any non-repo extra args.
+contexts=("markdown-lint")
+for c in "$@"; do
+  [[ "$c" == */* ]] && [[ "$c" != *" "* ]] && continue
+  contexts+=("$c")
+done
+
+# Build JSON array from contexts.
+contexts_json=$(printf ',"%s"' "${contexts[@]}")
+contexts_json="[${contexts_json:1}]"
+
+gh api -X PUT "repos/${REPO}/branches/main/protection" \
   -H "Accept: application/vnd.github+json" \
   --input - <<JSON
 {
@@ -49,5 +72,21 @@ gh api -X PUT "repos/${repo}/branches/main/protection" \
 }
 JSON
 
-echo "Branch protection applied to ${repo}@main."
+echo "Branch protection applied to ${REPO}@main."
 echo "Required status checks: ${contexts_json}"
+
+# Verify that each required context exists in recent CI runs.
+# A context that doesn't match any check run shows "Expected — Waiting" permanently.
+# Skip the check if no runs exist yet (new repo, CI hasn't fired).
+recent=$(gh api "repos/${REPO}/commits/main/check-runs" --jq '[.check_runs[].name]' 2>/dev/null || echo "[]")
+if [[ $(echo "$recent" | jq 'length') -gt 0 ]]; then
+  for ctx in "${contexts[@]}"; do
+    if ! echo "$recent" | jq -e --arg c "$ctx" 'contains([$c])' > /dev/null 2>&1; then
+      echo ""
+      echo "⚠  Warning: \"$ctx\" not found in recent check runs on ${REPO}@main."
+      echo "   This context will show \"Expected — Waiting\" permanently."
+      echo "   Actual check names: $(echo "$recent" | jq -r 'join(", ")')"
+      echo "   Re-run this script with the correct context strings."
+    fi
+  done
+fi
