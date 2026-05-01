@@ -4,18 +4,7 @@ Block-based US sovereignty history — a static D3 visualization that paints the
 
 Hover any cell for the full sequence (e.g. `France → Spain → France → USA` for the Louisiana Purchase, or `Spain → Mexico → Bear Flag Republic → USA` for California). Scroll/pinch to zoom. Drag to pan.
 
-## Run it
-
-No build, no install — just serve the directory over HTTP and open it.
-
-```bash
-python3 -m http.server 8080
-# open http://localhost:8080
-```
-
-`file://` won't work — `data/us-states.json` is fetched, so the page must be served via HTTP.
-
-## What it covers
+## Overview
 
 15 sovereignty sequences, including:
 
@@ -35,7 +24,18 @@ python3 -m http.server 8080
 
 Continental US only. AK / HI / territories are deliberately excluded.
 
-## How it's organized
+## Getting started
+
+No build, no install — just serve the directory over HTTP and open it.
+
+```bash
+python3 -m http.server 8080
+# open http://localhost:8080
+```
+
+`file://` won't work — `data/us-states.json` is fetched, so the page must be served via HTTP.
+
+## Usage
 
 | Path | What's there |
 |---|---|

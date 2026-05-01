@@ -15,3 +15,8 @@ Thumbs.db
 
 # Per-user Claude Code settings (allow lists, machine-specific overrides)
 .claude/settings.local.json
+
+# Claude Code worktrees (temporary working directories, never committed)
+.claude/worktrees/
+
+# Add stack-specific patterns below (node_modules/, dist/, __pycache__/, target/, etc.)

@@ -16,6 +16,7 @@ All notable changes to this project are documented here. Format based on [Keep a
 - `.claude/settings.json` — retire old pre-commit changelog hook; update pre-push hook to canon v0.2.5 (issue number optional in slug, allow `chore/release-v*` branches).
 - `.github/PULL_REQUEST_TEMPLATE.md` — add `## Follow-ups` section; update test plan comment to canon v0.2.5 wording.
 - `.markdownlint.json` and `.editorconfig` from the WorldRover canon. Initial scaffold missed these; CI was red on default markdownlint MD013 (line-length) until the configs landed. Plus a local `MD024: {siblings_only: true}` override so the standard Keep a Changelog repeated `### Added` headings under different version sections don't trigger duplicate-heading errors. Closes #1.
+- Align with wr-canon v0.4.1: rename `.claude/.worldrover-check` → `.claude/.wr-canon`, add `.claude/worktrees/` to `.gitignore`, fix `release.yml` Maintenance label (`chore` → `type: refactor`), move `Closes #` to top of PR template, add standard labels block to `init-labels.sh`, rename `README.md` headings to canon schema (`## Overview`, `## Getting started`, `## Usage`). Closes #34.
 
 ## [0.1.0] - 2026-04-26
 
