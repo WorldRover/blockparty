@@ -6,6 +6,7 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ### Added
 
+- `docs/testing-strategy.md` — test coverage analysis and a tiered testing proposal (data-integrity invariants, `getSubstateKey` unit tests, rendering-pipeline integration, browser smoke test) for the currently untested codebase.
 - `README.md` — quick-start, sovereignty sequence summary, file map.
 - `scripts/init-labels.sh` and `scripts/protect-main.sh` from WorldRover canon.
 - `.github/release.yml` — PR-label-based release note categories.
