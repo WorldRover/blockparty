@@ -4,10 +4,13 @@
   "private": true,
   "description": "Test-only tooling for the blockparty static site. The shipped site remains dependency-free and CDN-loaded; this manifest exists solely to run the Node test suite. CHANGELOG.md remains the source of truth for releases (see CLAUDE.md).",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "test:e2e": "node --test e2e/smoke.mjs"
   },
   "devDependencies": {
+    "d3": "^7.9.0",
     "d3-geo": "^3.1.1",
+    "playwright": "^1.62.1",
     "topojson-client": "^3.1.0"
   }
 }

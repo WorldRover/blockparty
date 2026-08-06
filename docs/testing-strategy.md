@@ -13,6 +13,19 @@ The highest-value, lowest-cost work is a small suite of **data-integrity
 assertions** plus **pure-function unit tests for `getSubstateKey`**, both of
 which run in plain Node with no browser.
 
+## Implementation status
+
+All four tiers proposed below have since landed:
+
+- **Tier 1** — `test/data-integrity.test.js`
+- **Tier 2** — `test/getsubstate.test.js`
+- **Tier 3** — `test/pipeline.test.js` (plus the `js/lookup.js` extraction it required)
+- **Tier 4** — `e2e/smoke.mjs` (Playwright; run with `npm run test:e2e`)
+
+Tiers 1–3 run on `node --test` (the CI `test` job); Tier 4 runs in the CI
+`browser-test` job. The sections below are preserved as the original analysis
+that motivated the work.
+
 ## Current state
 
 ### What runs in CI (`.github/workflows/ci.yml`)
