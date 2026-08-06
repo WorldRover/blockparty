@@ -1,0 +1,9 @@
+{
+  "name": "blockparty",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Test-only tooling for the blockparty static site. The shipped site remains dependency-free and CDN-loaded; this manifest exists solely to run the Node test suite. CHANGELOG.md remains the source of truth for releases (see CLAUDE.md).",
+  "scripts": {
+    "test": "node --test"
+  }
+}

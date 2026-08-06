@@ -239,3 +239,11 @@ const SEQUENCE_COLORS = {
   'Spain→Mexico→Bear Flag Republic→USA':                    '#e8a838',  // gold (Bear Flag / CA)
   'Spain+Russia→Britain+USA→USA':                           '#ff9da7',  // pink (Oregon Country)
 };
+
+// Node interop for tests — inert in the browser (no `module` global there).
+// Keeps territories.js a plain browser global while letting `node --test` import it.
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    FIPS_TO_STATE, STATE_SOVEREIGNTY, SEQUENCE_INFO, SEQUENCE_COLORS, getSubstateKey,
+  };
+}

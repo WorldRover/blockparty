@@ -6,6 +6,7 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ### Added
 
+- Test suite (`test/`) — the first automated tests. Tier 1 data-integrity invariants (`test/data-integrity.test.js`) guard against the documented gray-`#888` failure mode and dropped-state bug; Tier 2 unit tests (`test/getsubstate.test.js`) pin `getSubstateKey`'s boundary overrides on both sides of every line. Runs on `node --test` with zero dependencies. Adds a `test` job to CI and a minimal test-only `package.json` (site stays dependency-free). Implements the first steps of `docs/testing-strategy.md`.
 - `docs/testing-strategy.md` — test coverage analysis and a tiered testing proposal (data-integrity invariants, `getSubstateKey` unit tests, rendering-pipeline integration, browser smoke test) for the currently untested codebase.
 - `README.md` — quick-start, sovereignty sequence summary, file map.
 - `scripts/init-labels.sh` and `scripts/protect-main.sh` from WorldRover canon.
