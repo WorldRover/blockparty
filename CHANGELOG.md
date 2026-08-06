@@ -4,6 +4,8 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-06
+
 ### Added
 
 - Tier 4 browser smoke test (`e2e/smoke.mjs`, Playwright) — loads the real page in Chromium and asserts the render path end to end: the grid draws (>1000 cells), the legend has one item per distinct rendered sequence, the tooltip shows a sequence on hover and hides on leave, and the data-load failure branch shows its message. Hermetic — the D3/topojson CDN scripts are intercepted and served from local UMD bundles, so it needs no external network. Adds a `test:e2e` script, a `browser-test` CI job (installs Chromium), and `playwright`/`d3` test-only devDependencies. Completes the tiers proposed in `docs/testing-strategy.md`.
