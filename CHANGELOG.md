@@ -6,6 +6,7 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ### Added
 
+- Tier 3 pipeline integration tests (`test/pipeline.test.js`) — resolve ~24 famous US landmarks through the real bundled TopoJSON + `d3-geo` projection to assert the geometry, projection, and data layer agree; sweep a coarse grid to prove no cell resolves to the unstyled `#888` fallback; and verify the geo-lookup extraction preserved `app.js`'s original behavior. Adds `d3-geo`/`topojson-client` as **test-only** devDependencies (the shipped site is unchanged) and a `npm ci` step to the CI `test` job.
 - Test suite (`test/`) — the first automated tests. Tier 1 data-integrity invariants (`test/data-integrity.test.js`) guard against the documented gray-`#888` failure mode and dropped-state bug; Tier 2 unit tests (`test/getsubstate.test.js`) pin `getSubstateKey`'s boundary overrides on both sides of every line. Runs on `node --test` with zero dependencies. Adds a `test` job to CI and a minimal test-only `package.json` (site stays dependency-free). Implements the first steps of `docs/testing-strategy.md`.
 - `docs/testing-strategy.md` — test coverage analysis and a tiered testing proposal (data-integrity invariants, `getSubstateKey` unit tests, rendering-pipeline integration, browser smoke test) for the currently untested codebase.
 - `README.md` — quick-start, sovereignty sequence summary, file map.
@@ -14,6 +15,7 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ### Changed
 
+- Extract the pure geometry→sequence lookup (`buildStateLookup`, `findSequence`) out of the `js/app.js` render IIFE into a new `js/lookup.js` module so it can be unit-tested in Node. Behavior-preserving — the render path is unchanged and an equivalence test pins that.
 - `scripts/protect-main.sh` — sync to canon v0.2.6: accepts optional `OWNER/REPO` arg, improved check-context detection (space-aware `/` heuristic), post-apply warning when a required context name isn't found in recent CI runs.
 - `.claude/settings.json` — retire old pre-commit changelog hook; update pre-push hook to canon v0.2.5 (issue number optional in slug, allow `chore/release-v*` branches).
 - `.github/PULL_REQUEST_TEMPLATE.md` — add `## Follow-ups` section; update test plan comment to canon v0.2.5 wording.
