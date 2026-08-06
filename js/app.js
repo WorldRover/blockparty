@@ -27,34 +27,11 @@
 
   const path = d3.geoPath().projection(projection);
 
-  // Build state lookup with bounding boxes for fast rejection
-  const stateLookup = statesGeo.features
-    .map(f => {
-      const fips = String(f.id).padStart(2, '0');
-      const abbr = FIPS_TO_STATE[fips];
-      const seq  = abbr ? STATE_SOVEREIGNTY[abbr] : null;
-      if (!seq) return null;
-      const [[lon0, lat0], [lon1, lat1]] = d3.geoBounds(f);
-      return { feature: f, abbr, seq, key: seq.join('→'), lon0, lat0, lon1, lat1 };
-    })
-    .filter(Boolean);
-
-  // Sort largest states first (faster average lookup)
-  stateLookup.sort((a, b) =>
-    (b.lon1 - b.lon0) * (b.lat1 - b.lat0) - (a.lon1 - a.lon0) * (a.lat1 - a.lat0)
+  // Build state lookup with bounding boxes for fast rejection, sorted
+  // largest-first for faster average lookup (see js/lookup.js).
+  const stateLookup = buildStateLookup(
+    statesGeo.features, d3.geoBounds, FIPS_TO_STATE, STATE_SOVEREIGNTY,
   );
-
-  function findSequence(lonlat) {
-    const [lon, lat] = lonlat;
-    for (const s of stateLookup) {
-      if (lon < s.lon0 || lon > s.lon1 || lat < s.lat0 || lat > s.lat1) continue;
-      if (d3.geoContains(s.feature, lonlat)) {
-        const override = getSubstateKey(lon, lat, s.abbr);
-        return override !== null ? override : s.key;
-      }
-    }
-    return null;
-  }
 
   // Build grid
   const cells = [];
@@ -62,7 +39,7 @@
     for (let py = 0; py < H; py += CELL) {
       const lonlat = projection.invert([px + CELL / 2, py + CELL / 2]);
       if (!lonlat) continue;
-      const key = findSequence(lonlat);
+      const key = findSequence(stateLookup, lonlat, d3.geoContains, getSubstateKey);
       if (key) cells.push({ px, py, key });
     }
   }

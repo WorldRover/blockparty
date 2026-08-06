@@ -36,5 +36,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Install test dependencies
+        run: npm ci
       - name: Run test suite
         run: node --test

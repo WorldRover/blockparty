@@ -20,3 +20,4 @@ Thumbs.db
 .claude/worktrees/
 
 # Add stack-specific patterns below (node_modules/, dist/, __pycache__/, target/, etc.)
+node_modules/
