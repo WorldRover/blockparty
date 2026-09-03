@@ -4,18 +4,11 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-03
+
 ### Added
 
 - Automated releases (`.github/workflows/release.yml`) — merging a `chore/release-v<version>` PR to `main` now auto-tags `v<version>` and publishes the GitHub release with notes from the matching `CHANGELOG.md` section. Ported from the WorldRover canon (terrvolve/artificialis); runs server-side with `contents: write` so it works from environments that can't push tags directly.
-
-### Changed
-
-- Versioning is now anchored on `package.json`'s `version` field (kept in sync with the git tag and `CHANGELOG.md`), replacing the previous "no manifest version" model. `CLAUDE.md` § Versioning updated to document the automated release flow.
-
-## [0.2.0] - 2026-08-06
-
-### Added
-
 - Tier 4 browser smoke test (`e2e/smoke.mjs`, Playwright) — loads the real page in Chromium and asserts the render path end to end: the grid draws (>1000 cells), the legend has one item per distinct rendered sequence, the tooltip shows a sequence on hover and hides on leave, and the data-load failure branch shows its message. Hermetic — the D3/topojson CDN scripts are intercepted and served from local UMD bundles, so it needs no external network. Adds a `test:e2e` script, a `browser-test` CI job (installs Chromium), and `playwright`/`d3` test-only devDependencies. Completes the tiers proposed in `docs/testing-strategy.md`.
 - Tier 3 pipeline integration tests (`test/pipeline.test.js`) — resolve ~24 famous US landmarks through the real bundled TopoJSON + `d3-geo` projection to assert the geometry, projection, and data layer agree; sweep a coarse grid to prove no cell resolves to the unstyled `#888` fallback; and verify the geo-lookup extraction preserved `app.js`'s original behavior. Adds `d3-geo`/`topojson-client` as **test-only** devDependencies (the shipped site is unchanged) and a `npm ci` step to the CI `test` job.
 - Test suite (`test/`) — the first automated tests. Tier 1 data-integrity invariants (`test/data-integrity.test.js`) guard against the documented gray-`#888` failure mode and dropped-state bug; Tier 2 unit tests (`test/getsubstate.test.js`) pin `getSubstateKey`'s boundary overrides on both sides of every line. Runs on `node --test` with zero dependencies. Adds a `test` job to CI and a minimal test-only `package.json` (site stays dependency-free). Implements the first steps of `docs/testing-strategy.md`.
@@ -26,6 +19,7 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ### Changed
 
+- Versioning is now anchored on `package.json`'s `version` field (kept in sync with the git tag and `CHANGELOG.md`), replacing the previous "no manifest version" model. `CLAUDE.md` § Versioning updated to document the automated release flow.
 - Extract the pure geometry→sequence lookup (`buildStateLookup`, `findSequence`) out of the `js/app.js` render IIFE into a new `js/lookup.js` module so it can be unit-tested in Node. Behavior-preserving — the render path is unchanged and an equivalence test pins that.
 - `scripts/protect-main.sh` — sync to canon v0.2.6: accepts optional `OWNER/REPO` arg, improved check-context detection (space-aware `/` heuristic), post-apply warning when a required context name isn't found in recent CI runs.
 - `.claude/settings.json` — retire old pre-commit changelog hook; update pre-push hook to canon v0.2.5 (issue number optional in slug, allow `chore/release-v*` branches).
