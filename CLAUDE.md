@@ -24,23 +24,18 @@ python3 -m http.server 8080
 
 ## Versioning
 
-Docs/static-site repo with no manifest — the topmost released entry in `CHANGELOG.md` plus the matching git tag are the source of truth. No `package.json` `version` field to keep in sync.
+The `version` field in `package.json` is the authoritative version, together with the matching git tag and the `## [version]` entry in `CHANGELOG.md`. The three are kept in sync: the release workflow (`.github/workflows/release.yml`) reads the version from `package.json` and pulls release notes from the matching `CHANGELOG.md` section.
 
 `CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) — `## [version] - YYYY-MM-DD` headings with `### Added / Changed / Fixed / Removed` sections. A pre-commit hook (`.claude/settings.json`) blocks `git commit` unless `CHANGELOG.md` is staged, so every commit either updates the existing `[Unreleased]` section or cuts a new version.
 
 **Cadence — buffer model.** Changes land under `[Unreleased]` and accumulate; cut a release when the buffer is a meaningful chunk: a new sequence sweep, a tuning pass on the override boundaries, a substantive doc update, a dep/audit cleanup. Single one-off tweaks do not each get their own version. There is no schedule; cuts are content-driven, not time-driven.
 
-**When bumping versions:** move `[Unreleased]` entries into a new `## [<version>] - <date>` section in `CHANGELOG.md` (preserve the empty `## [Unreleased]` heading above it).
+**Cutting a release (automated).** Open a release PR from a `chore/release-v<version>` branch that:
 
-**Tagging and releasing (after the PR merges):** tags live on `main`, not on feature branches.
+1. bumps `version` in `package.json` to `<version>`, and
+2. moves `[Unreleased]` entries into a new `## [<version>] - <date>` section in `CHANGELOG.md` (preserve the empty `## [Unreleased]` heading above it).
 
-```bash
-git checkout main
-git pull origin main
-git tag -a v<version> -m "<short description>"
-git push origin v<version>
-gh release create v<version> --title "<title>" --notes "<changelog entry>"
-```
+When that PR merges to `main`, the **Release** workflow auto-tags `v<version>` on `main` and creates the GitHub release with notes from the `CHANGELOG.md` section — no manual `git tag` or `gh release create`. The workflow refuses to re-tag a version that already exists. (`alpha`/`beta`/`rc` suffixes publish as pre-releases.) Because a `pull_request`-triggered workflow runs the copy on `main`, the PR that introduces or edits `release.yml` cannot itself trigger a release — land workflow changes first, then cut the release in a separate `chore/release-v*` PR.
 
 ## Branches and pull requests
 

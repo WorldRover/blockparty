@@ -1,0 +1,87 @@
+name: Release
+
+# Auto-tag and create the GitHub release when a release PR (branch
+# `chore/release-vX.Y.Z` per CLAUDE.md convention) merges to main.
+# Version comes from package.json; release notes are pulled from the
+# matching `## [X.Y.Z]` section of CHANGELOG.md.
+#
+# This runs server-side with `contents: write`, so it works from
+# session/MCP environments that can create and merge PRs but cannot push
+# tags or dispatch workflows themselves.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  release:
+    if: |
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'chore/release-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Read version from package.json
+        id: version
+        run: |
+          v=$(node -p "require('./package.json').version")
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+          echo "Releasing v$v"
+
+      - name: Refuse to retag an existing version
+        run: |
+          v="${{ steps.version.outputs.version }}"
+          if git ls-remote --tags origin "refs/tags/v$v" | grep -q .; then
+            echo "::error::Tag v$v already exists on origin — delete it first if you intend to re-release."
+            exit 1
+          fi
+
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          v="${{ steps.version.outputs.version }}"
+          awk -v ver="$v" '
+            $0 ~ "^## \\[" ver "\\]" { flag = 1; next }
+            flag && /^## \[/ { exit }
+            flag { print }
+          ' CHANGELOG.md > release_notes.md
+          # Trim leading blank lines so the release body is tight.
+          sed -i '/./,$!d' release_notes.md
+          if [ ! -s release_notes.md ]; then
+            echo "::error::No CHANGELOG.md section found for version $v"
+            exit 1
+          fi
+          echo "--- release_notes.md ---"
+          cat release_notes.md
+          echo "--- end ---"
+
+      - name: Create annotated tag on main
+        run: |
+          v="${{ steps.version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$v" -m "v$v"
+          git push origin "v$v"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          v="${{ steps.version.outputs.version }}"
+          # Canonical channels per CLAUDE.md: alpha / beta / rc suffixes are
+          # pre-release; anything else (incl. plain `0.2.0`) is stable.
+          prerelease=""
+          if [[ "$v" =~ -(alpha|beta|rc) ]]; then
+            prerelease="--prerelease"
+          fi
+          gh release create "v$v" \
+            --title "v$v" \
+            --notes-file release_notes.md \
+            --target main \
+            $prerelease

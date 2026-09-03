@@ -4,6 +4,14 @@ All notable changes to this project are documented here. Format based on [Keep a
 
 ## [Unreleased]
 
+### Added
+
+- Automated releases (`.github/workflows/release.yml`) — merging a `chore/release-v<version>` PR to `main` now auto-tags `v<version>` and publishes the GitHub release with notes from the matching `CHANGELOG.md` section. Ported from the WorldRover canon (terrvolve/artificialis); runs server-side with `contents: write` so it works from environments that can't push tags directly.
+
+### Changed
+
+- Versioning is now anchored on `package.json`'s `version` field (kept in sync with the git tag and `CHANGELOG.md`), replacing the previous "no manifest version" model. `CLAUDE.md` § Versioning updated to document the automated release flow.
+
 ## [0.2.0] - 2026-08-06
 
 ### Added

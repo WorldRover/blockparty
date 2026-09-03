@@ -1,8 +1,8 @@
 {
   "name": "blockparty",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
-  "description": "Test-only tooling for the blockparty static site. The shipped site remains dependency-free and CDN-loaded; this manifest exists solely to run the Node test suite. CHANGELOG.md remains the source of truth for releases (see CLAUDE.md).",
+  "description": "Tooling manifest for the blockparty static site. The shipped site remains dependency-free and CDN-loaded; this manifest exists to run the Node test suite and to carry the authoritative release version (see CLAUDE.md § Versioning). Release notes live in CHANGELOG.md.",
   "scripts": {
     "test": "node --test",
     "test:e2e": "node --test e2e/smoke.mjs"
